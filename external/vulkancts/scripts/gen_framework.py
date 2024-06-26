@@ -3832,13 +3832,7 @@ def writeGetDeviceProcAddr(api, filename):
 
 def writeConformanceVersions(filename):
     # get list of all vulkan/vulkansc tags from git
-    remote_urls = os.popen("git remote -v").read().split('\n')
-    remote_url = None
-    for line in remote_urls:
-        if "gerrit.khronos.org:29418/vk-gl-cts" in line:
-            remote_url = line.split()[1]
-            break
-    listOfTags = os.popen("git ls-remote -t %s" % (remote_url)).read()
+    listOfTags = os.popen("git tag -l").read()
     vkMatches = re.findall("vulkan-cts-(\d).(\d).(\d).(\d)", listOfTags, re.M)
     scMatches = re.findall("vulkansc-cts-(\d).(\d).(\d).(\d)", listOfTags, re.M)
     if len(vkMatches) == 0 or len(scMatches) == 0:
