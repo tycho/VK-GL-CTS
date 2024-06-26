@@ -25,6 +25,8 @@
 #include "tcuCommandLine.hpp"
 #include "tcuTestLog.hpp"
 
+#include <Windows.h>
+
 #include "deClock.h"
 
 namespace tcu
@@ -350,6 +352,30 @@ TestCase::IterateResult TestSessionExecutor::iterateTestCase(TestCase *testCase)
 
     m_testCtx.touchWatchdog();
 
+    _se_translator_function oldTranslator =
+        _set_se_translator([](unsigned int u, EXCEPTION_POINTERS *pExc)
+    {
+        std::string error = "Unhandled SEH exception: ";
+        bool fatal = false;
+        switch(u) {
+        case EXCEPTION_ACCESS_VIOLATION:
+            error += "EXCEPTION_ACCESS_VIOLATION";
+            break;
+        case EXCEPTION_INT_DIVIDE_BY_ZERO:
+            error += "EXCEPTION_INT_DIVIDE_BY_ZERO";
+            break;
+        default:
+            fatal = true;
+            {
+                char buffer[32];
+                sprintf(buffer, "0x%08x", u);
+                error += buffer;
+            }
+            break;
+        }
+        throw tcu::SEHException(error, fatal);
+    });
+
     try
     {
         iterateResult = m_caseExecutor->iterate(testCase);
@@ -358,6 +384,12 @@ TestCase::IterateResult TestSessionExecutor::iterateTestCase(TestCase *testCase)
     {
         m_testCtx.setTestResult(QP_TEST_RESULT_RESOURCE_ERROR, "Failed to allocate memory during test execution");
         m_testCtx.setTerminateAfter(true);
+    }
+    catch (const tcu::SEHException &e)
+    {
+        log << e;
+        m_testCtx.setTestResult(e.getTestResult(), e.getMessage());
+        m_testCtx.setTerminateAfter(e.isFatal());
     }
     catch (const tcu::TestException &e)
     {
@@ -370,6 +402,8 @@ TestCase::IterateResult TestSessionExecutor::iterateTestCase(TestCase *testCase)
         log << e;
         m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, e.getMessage());
     }
+
+    _set_se_translator(oldTranslator);
 
     return iterateResult;
 }

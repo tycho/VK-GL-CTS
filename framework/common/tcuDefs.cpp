@@ -79,6 +79,16 @@ Exception::Exception(const std::string &message) : std::runtime_error(message), 
 {
 }
 
+SEHException::SEHException(const char *message, const char *expr, const char *file, int line, bool fatal)
+    : Exception(formatError(message, expr, file, line)), m_fatal(fatal)
+{
+}
+
+SEHException::SEHException(const std::string &message, bool fatal)
+    : Exception(message), m_fatal(fatal)
+{
+}
+
 TestException::TestException(const char *message, const char *expr, const char *file, int line, qpTestResult result)
     : Exception(formatError(message, expr, file, line))
     , m_result(result)
