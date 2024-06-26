@@ -3602,7 +3602,7 @@ def writeGetDeviceProcAddr(api, filename):
 
 def writeConformanceVersions(filename):
     # get list of all vulkan/vulkansc tags from git
-    listOfTags = os.popen("git ls-remote -t").read()
+    listOfTags = os.popen("git tag -l").read()
     vkMatches = re.findall("vulkan-cts-(\d).(\d).(\d).(\d)", listOfTags, re.M)
     scMatches = re.findall("vulkansc-cts-(\d).(\d).(\d).(\d)", listOfTags, re.M)
     if len(vkMatches) == 0 or len(scMatches) == 0:
