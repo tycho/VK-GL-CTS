@@ -54,10 +54,10 @@ class HostInfo:
             "i686": 32,
             "x86": 32,
             "x86_64": 64,
-            "AMD64": 64,
+            "amd64": 64,
             "arm64": 64
         }
-        machine = platform.machine()
+        machine = platform.machine().lower()
 
         if not machine in MACHINE_BITS:
             raise Exception("Unknown platform.machine() '%s'" % machine)
