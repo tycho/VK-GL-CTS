@@ -68,6 +68,29 @@ private:
     const std::runtime_error m_message;
 };
 
+class SEHException : public Exception
+{
+public:
+    SEHException(const char *message, const char *expr, const char *file, int line, bool fatal);
+    SEHException(const std::string &message, bool fatal);
+    virtual ~SEHException(void) throw()
+    {
+    }
+
+    qpTestResult getTestResult() const
+    {
+        return QP_TEST_RESULT_CRASH;
+    }
+
+    virtual bool isFatal(void) const
+    {
+        return m_fatal;
+    }
+
+private:
+    bool m_fatal;
+};
+
 //! Base exception class for test exceptions that affect test result
 class TestException : public Exception
 {
