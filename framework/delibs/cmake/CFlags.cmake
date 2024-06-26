@@ -78,7 +78,7 @@ elseif (DE_COMPILER_IS_MSC)
 	# 4668: undefined identifier in preprocessor expression (from system headers)
 	# 4738: storing 32-bit float result in memory
 	# 4711: automatic inline expansion
-	set(MSC_BASE_FLAGS "/DWIN32 /D_WINDOWS /D_CRT_SECURE_NO_WARNINGS")
+	set(MSC_BASE_FLAGS "/DWIN32 /D_WINDOWS /D_CRT_SECURE_NO_WARNINGS /MP")
 	set(MSC_WARNING_FLAGS "/W3 /wd4820 /wd4255 /wd4668 /wd4738 /wd4711")
 
 	set(CMAKE_C_FLAGS			"${CMAKE_C_FLAGS} ${MSC_BASE_FLAGS} ${MSC_WARNING_FLAGS}")
